@@ -7,7 +7,32 @@ continuam como SRG, que o ForgeGradle tambem aceita.
 """
 import csv, io, re, sys, urllib.request, zipfile, pathlib
 
-URL = "https://maven.minecraftforge.net/de/oceanlabs/mcp/mcp_stable/22-1.8.9/mcp_stable-22-1.8.9.zip"
+PATH = "de/oceanlabs/mcp/mcp_stable/22-1.8.9/mcp_stable-22-1.8.9.zip"
+URLS = [
+    "https://maven.minecraftforge.net/" + PATH,
+    "https://files.minecraftforge.net/maven/" + PATH,
+    "https://maven.minecraftforge.net/net/minecraftforge/" + PATH,
+]
+HEADERS = {
+    "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0 Safari/537.36",
+    "Accept": "*/*",
+}
+
+
+def download():
+    last = None
+    for url in URLS:
+        try:
+            req = urllib.request.Request(url, headers=HEADERS)
+            data = urllib.request.urlopen(req, timeout=60).read()
+            zipfile.ZipFile(io.BytesIO(data)).namelist()  # confere se e um zip valido
+            print("baixado de", url)
+            return data
+        except Exception as e:  # tenta o proximo endereco
+            last = e
+            print("falhou", url, "->", e)
+    raise SystemExit("Nao consegui baixar os mapeamentos MCP: %s" % last)
+
 
 def load_map(zf):
     m = {}
@@ -16,6 +41,7 @@ def load_map(zf):
             for row in csv.DictReader(io.TextIOWrapper(f, "utf-8")):
                 m[row["searge"]] = row["name"]
     return m
+
 
 def convert(root, m):
     pat = re.compile(r"\b(func_\d+_[A-Za-z0-9_]+|field_\d+_[A-Za-z0-9_]+)\b")
@@ -28,10 +54,11 @@ def convert(root, m):
             n += 1
     return n
 
+
 if __name__ == "__main__":
     src = sys.argv[1] if len(sys.argv) > 1 else "src/main/java"
     zpath = sys.argv[2] if len(sys.argv) > 2 else None
-    data = open(zpath, "rb").read() if zpath else urllib.request.urlopen(URL).read()
+    data = open(zpath, "rb").read() if zpath else download()
     with zipfile.ZipFile(io.BytesIO(data)) as zf:
         mapping = load_map(zf)
     print("mapeamentos:", len(mapping), "| arquivos alterados:", convert(src, mapping))
