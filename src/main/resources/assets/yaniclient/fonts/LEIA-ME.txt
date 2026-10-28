@@ -1,0 +1,2 @@
+Quer uma fonte propria? Coloque aqui um arquivo chamado font.ttf (ex.: Poppins, Inter, Montserrat).
+O client usa esse arquivo automaticamente. Sem ele, usa uma fonte do seu sistema (Segoe UI no Windows).

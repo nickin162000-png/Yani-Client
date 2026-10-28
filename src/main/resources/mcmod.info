@@ -1,0 +1,8 @@
+[{
+  "modid": "yaniclient",
+  "name": "Yani Client",
+  "description": "Client PvP com HUD completo para 1.8.9.",
+  "version": "1.0",
+  "mcversion": "1.8.9",
+  "authorList": ["Yani Client"]
+}]
