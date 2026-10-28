@@ -407,7 +407,7 @@ public class ModernGui extends GuiScreen {
             int tc = RenderUtil.lerpColor(0xFF8E8E9C, 0xFFFFFFFF, tabAnim[i]);
             Fonts.drawC(TABS[i], b[0] + 14, (b[1] + b[3]) / 2F, tc, 0.95F, tabAnim[i] > 0.5F, false);
         }
-        Fonts.drawC("Right Shift fecha",, px + 20, py + PH - 22, 0xFF5E5E6A, 0.72F, false, false);
+          Fonts.drawC("Right Shift fecha", px + 20, py + PH - 22, 0xFF5E5E6A, 0.72F, false, false);
 
         // cabecalho
         float x0 = px + 126;
