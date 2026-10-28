@@ -1,0 +1,35 @@
+name: Build Yani Client
+
+on:
+  push:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 8
+
+      - name: Converter nomes SRG para MCP
+        run: python3 tools/srg2mcp.py src/main/java
+
+      - name: Instalar Gradle 2.14.1 (exigido pelo ForgeGradle 2)
+        run: |
+          curl -fsSL -o gradle.zip https://services.gradle.org/distributions/gradle-2.14.1-bin.zip
+          unzip -q gradle.zip -d "$HOME/gradle"
+          echo "$HOME/gradle/gradle-2.14.1/bin" >> "$GITHUB_PATH"
+
+      - name: Compilar
+        run: gradle build --no-daemon
+
+      - name: Guardar o .jar
+        uses: actions/upload-artifact@v4
+        with:
+          name: YaniClient
+          path: build/libs/*.jar
